@@ -1,3 +1,28 @@
+"
+I represent a polynomial equation, in the form of its coefficients.
+
+I know how to find my roots.
+
+I could be improved by collaborating with the PolyMath library (which would allow me to use complex numbers intrinsically). 
+
+Public API and Key Messages:
+
+- findRoots   
+- message two 
+- (for bonus points) how to create instances.
+
+   One simple example is simply gorgeous.
+ 
+Internal Representation and Key Implementation Points.
+
+    Instance Variables
+	coefficients:		<Object>
+	imagRoots:		<Object>
+	realRoots:		<Object>
+
+
+    Implementation Points
+"
 Class {
 	#name : #Polynomial,
 	#superclass : #Object,
@@ -60,7 +85,10 @@ Polynomial >> cubeRoot [
 	| cube root |
 	cube := (coefficients at: 1) / (coefficients at: 4) .
 	root := cube sign negated * (cube abs ** (1/3)) asFloat .
-	realRoots at: 1 put: root.
+	
+	"All three imaginary roots are already set to 0."
+	"Also, the root average is also 0 -- no need to sum it."
+	realRoots at: 1 put: root .
 	realRoots at: 2 put: root .
 	realRoots at: 3 put: root .
 	
@@ -105,6 +133,7 @@ Polynomial >> realRoots: anObject [
 { #category : #'as yet unclassified' }
 Polynomial >> rootsOfDegreeFour [
 	"Solve a quartic polynomial; either 4 reals, 4 imaginaries, or 2 real/2 imaginary roots."
+	"Uses Ferrari's Formulas."
 	
 	| a b c d e p q r s t u v w y cubic |
 	a := coefficients at: 5 .
@@ -180,6 +209,9 @@ Polynomial >> rootsOfDegreeThree [
 	r := q / -2 .
 	s := p / -3 .
 	
+	"If p=0, then we have a simple x^3 + d equation."
+	p =~ 0 ifTrue: [ ^ self cubeRoot ] .
+	
 	discriminant := (r * r) - (s * s * s) .
 	^ discriminant < 0
 		ifTrue: [ self rootsOfDegreeThreeAllReals: r with: s ] 
@@ -191,25 +223,27 @@ Polynomial >> rootsOfDegreeThreeAllReals: r with: s [
 	"Solve the depressed cubic with a negative descriminant."
 	"Uses Viete's Formulas: cos(3t) = 4cos^3(t) - 3cos(t)"
 	
-	| t angle |
-	t := s sqrt .
+	| scaleFactor argumentAngle |
+	scaleFactor := 2 * s sqrt .
+	argumentAngle := (2 * r / s / scaleFactor) arcCos / 3 .
+	
 	1 to: 3 do: [ :slice | 
-		angle := Float pi * 2 * slice / 3 .
-		angle := (r / s / t) arcCos / 3 + angle .
-		realRoots at: slice put: (realRoots at: slice) + (angle cos * 2 * t) ] .
+		| sliceAngle |
+		sliceAngle := Float pi * 2 * slice / 3 .
+		sliceAngle := argumentAngle + sliceAngle .
+		
+		"All three imaginary roots are already set to 0."
+		realRoots at: slice put: (realRoots at: slice) + (scaleFactor * sliceAngle cos) ] .
 	^ 3
 ]
 
 { #category : #'as yet unclassified' }
 Polynomial >> rootsOfDegreeThreeOneReal: r with: s discriminant: discriminant [
 	"Solve the depressed cubic with a positive discriminant."
-	"Uses Cardano's Formulas."
+	"Uses Cardano's Formulas, and produces only one real root."
 	
 	| u v |
-	"A triple real root means 'u' will be zero."
 	u := discriminant sqrt + r .
-	u =~ 0 
-		ifTrue: [ ^ self cubeRoot ] .
 	
 	u := u sign * (u abs ** (1/3)) asFloat .
 	v := s / u .
