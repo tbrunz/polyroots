@@ -93,14 +93,19 @@ Polynomial >> cubeRoot [
 { #category : #calculating }
 Polynomial >> findRoots [
 	"Find or calculate the roots of the equation."	
-			
+	
+	| degree |	
 	"Require that an array of coefficients has already be set."
-	(coefficients isArray and: [ coefficients size > 0 ])
+	(coefficients isArray and: [ coefficients isNotEmpty ])
 		ifFalse: [ ^ self rootsOfNoCoefficients ] .
-		
-	"If so, use the polynomial's degree as an index into an array
-	of messages (method selectors) to dispatch the appropriate method."
-	^ self perform: (rootFinders at: coefficients size)
+	
+	"The equation can't exceed the size of what we can compute."	
+	degree := rootFinders size.
+	degree := coefficients size min: rootFinders size.
+	
+	"Use the polynomial's degree as an index into an array of 
+	messages (method selectors) to dispatch the appropriate method."
+	^ self perform: (rootFinders at: degree)
 	
 ]
 
@@ -135,6 +140,13 @@ Polynomial >> realRoots [
 Polynomial >> realRoots: anObject [
 
 	realRoots := anObject
+]
+
+{ #category : #'calculating-methods' }
+Polynomial >> rootsOfDegreeFivePlus [
+	"Find the roots of polynomials of degree 5 or more."
+	
+	^ self shouldBeImplemented 
 ]
 
 { #category : #'calculating-methods' }
