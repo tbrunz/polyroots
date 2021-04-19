@@ -7,18 +7,19 @@ I could be improved by collaborating with the PolyMath library (which would allo
 
 Public API and Key Messages:
 
-- findRoots   
-- message two 
-- (for bonus points) how to create instances.
-
-   One simple example is simply gorgeous.
+	Create a new polynomial instance and set its coefficient array.
+- aPolynomial := Polynomial with: coefficientArray.
+	Find the roots of the polynomial; results to 'realRoots' and 'imagRoots' arrays.
+- aPolynomial findRoots.
+	Set the coefficients array with the argument, then find the roots.
+- aPolynomial findRoots: coefficientArray.
  
 Internal Representation and Key Implementation Points.
 
-    Instance Variables
-	coefficients:		<Object>
-	imagRoots:		<Object>
-	realRoots:		<Object>
+    Instance Variables:
+	coefficients:	<Array of real numbers>
+	imagRoots:		<Array of real numbers>
+	realRoots:		<Array of real numbers>
 
 
     Implementation Points
@@ -56,14 +57,8 @@ Polynomial class >> initialize [
 Polynomial class >> with: coefficientArray [
 	"Create a new polynomial with the given coefficients."	
 	
-	| polynomial coeffs |
-	polynomial := self new .
-	
-	coeffs := coefficientArray isArray 
-		ifTrue: [ coefficientArray ] 
-		ifFalse: [ #() ] .
-		
-	^ polynomial coefficients: coeffs
+	^ self new 
+		coefficients: coefficientArray
 ]
 
 { #category : #accessing }
@@ -78,7 +73,7 @@ Polynomial >> coefficients: anObject [
 	coefficients := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'calculating-methods' }
 Polynomial >> cubeRoot [
 	"If the discriminant of a cubic is zero, it's a triple cube root."
 	
@@ -95,14 +90,26 @@ Polynomial >> cubeRoot [
 	^ 3
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #calculating }
 Polynomial >> findRoots [
 	"Find or calculate the roots of the equation."	
 			
-	coefficients isArray 
-		ifFalse: [ self error: 'coefficients not set!' ] .
+	"Require that an array of coefficients has already be set."
+	(coefficients isArray and: [ coefficients size > 0 ])
+		ifFalse: [ ^ self rootsOfNoCoefficients ] .
 		
+	"If so, use the polynomial's degree as an index into an array
+	of messages (method selectors) to dispatch the appropriate method."
 	^ self perform: (rootFinders at: coefficients size)
+	
+]
+
+{ #category : #calculating }
+Polynomial >> findRoots: anArray [ 
+	"Find or calculate the roots of the equation."	
+			
+	coefficients := anArray .
+	^ self findRoots 
 	
 ]
 
@@ -130,7 +137,7 @@ Polynomial >> realRoots: anObject [
 	realRoots := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'calculating-methods' }
 Polynomial >> rootsOfDegreeFour [
 	"Solve a quartic polynomial; either 4 reals, 4 imaginaries, or 2 real/2 imaginary roots."
 	"Uses Ferrari's Formulas."
@@ -173,7 +180,7 @@ Polynomial >> rootsOfDegreeFour [
 	^ 4
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'calculating-methods' }
 Polynomial >> rootsOfDegreeOne [
 	"Solve a linear equation (one root)."	
 	
@@ -188,7 +195,7 @@ Polynomial >> rootsOfDegreeOne [
 	^ 1
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'calculating-methods' }
 Polynomial >> rootsOfDegreeThree [
 	"Solve a cubic polynomial; either 3 reals or 1 real + 2 imaginary roots."	
 			
@@ -218,7 +225,7 @@ Polynomial >> rootsOfDegreeThree [
 		ifFalse: [ self rootsOfDegreeThreeOneReal: r with: s discriminant: discriminant ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'calculating-methods' }
 Polynomial >> rootsOfDegreeThreeAllReals: r with: s [
 	"Solve the depressed cubic with a negative descriminant."
 	"Uses Viete's Formulas: cos(3t) = 4cos^3(t) - 3cos(t)"
@@ -237,7 +244,7 @@ Polynomial >> rootsOfDegreeThreeAllReals: r with: s [
 	^ 3
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'calculating-methods' }
 Polynomial >> rootsOfDegreeThreeOneReal: r with: s discriminant: discriminant [
 	"Solve the depressed cubic with a positive discriminant."
 	"Uses Cardano's Formulas, and produces only one real root."
@@ -259,7 +266,7 @@ Polynomial >> rootsOfDegreeThreeOneReal: r with: s discriminant: discriminant [
 	^ 1
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'calculating-methods' }
 Polynomial >> rootsOfDegreeTwo [
 	"Solve a quadratic polynomial; either two real or two imaginary roots."	
 			
@@ -284,7 +291,7 @@ Polynomial >> rootsOfDegreeTwo [
 	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'calculating-methods' }
 Polynomial >> rootsOfDegreeZero [
 	"A polynomial equation with only a constant term has no roots!"
 	
@@ -294,11 +301,11 @@ Polynomial >> rootsOfDegreeZero [
 	^ self error: ( String streamContents: [ :stream | 
 		stream 
 			nextPutAll: 'Equation is a constant (';
-			nextPutAll: (coefficients at: 1 asString);
+			nextPutAll: ((coefficients at: 1) asString);
 			nextPutAll: '); no roots!' ] )
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'calculating-methods' }
 Polynomial >> rootsOfNoCoefficients [
 	"If a polynomial has an empty coefficient array, there are no roots!"	
 	
