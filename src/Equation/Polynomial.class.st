@@ -91,6 +91,15 @@ Polynomial >> cubeRoot [
 ]
 
 { #category : #calculating }
+Polynomial >> evaluate: abscissa [
+	"Find the ordinate of the polynomial at the given abscissa."
+	
+	^ coefficients reverse 
+		inject: 0 into: [ :sum :coeff |
+			sum * abscissa + coeff ] .
+]
+
+{ #category : #calculating }
 Polynomial >> findRoots [
 	"Find or calculate the roots of the equation."	
 	
@@ -100,7 +109,6 @@ Polynomial >> findRoots [
 		ifFalse: [ ^ self rootsOfNoCoefficients ] .
 	
 	"The equation can't exceed the size of what we can compute."	
-	degree := rootFinders size.
 	degree := coefficients size min: rootFinders size.
 	
 	"Use the polynomial's degree as an index into an array of 
@@ -154,7 +162,7 @@ Polynomial >> rootsOfDegreeFour [
 	"Solve a quartic polynomial; either 4 reals, 4 imaginaries, or 2 real/2 imaginary roots."
 	"Uses Ferrari's Formulas."
 	
-	| a b c d e p q r s t u v w y cubic |
+	| a b c d e p q r s t y poly reals |
 	a := coefficients at: 5 .
 	a = 0 ifTrue: [ self error: 'quartic must have non-zero a4!' ] .
 	
@@ -171,25 +179,38 @@ Polynomial >> rootsOfDegreeFour [
 	q := d + (2 * c * t) - (8 * t * t * t) .
 	r := e + (d * t) + (c * t * t) - (3 * t * t * t * t) .
 	
-	cubic := self class with: { 
-		p * (p * p - r) / 2 - (q * q / 8) .
+	poly := self class with: { 
+		p / 2 * (p * p - r) - (q * q / 8) .
 		2 * p * p - r .
 		5 / 2 * p .
 		1 } .
-	cubic findRoots .
 	
-	y := cubic realRoots at: 1 .
-	w := 2 * y + p .
-	s := w sqrt / 2 .
+	y := self selectRealRoot: poly largerThan: p / -2 .
+	s := (2 * y + p) sqrt / 2 .
 	
-	u := 3 / 4 * p + (y / 2) .
-	v := q / 4 / s .
+	poly := self class with: { 
+		p + y - (q / s / 4) .
+		2 * s .
+		1 } .
+	reals := poly findRoots .
 	
-	realRoots at: 1 put: ((u + v) negated) sqrt + s.
-	realRoots at: 1 put: ((u - v) negated) sqrt - s .
-	realRoots at: 1 put: ((u + v) negated) sqrt negated + s .
-	realRoots at: 1 put: ((u - v) negated) sqrt negated - s .
-	^ 4
+	realRoots at: 1 put: (realRoots at: 1) + (poly realRoots at: 1) .
+	realRoots at: 2 put: (realRoots at: 2) + (poly realRoots at: 2) .
+	imagRoots at: 1 put: (poly imagRoots at: 1) .
+	imagRoots at: 2 put: (poly imagRoots at: 2) .
+	
+	poly := self class with: { 
+		p + y + (q / s / 4) .
+		-2 * s .
+		1 } .
+	reals := reals + poly findRoots .
+	
+	realRoots at: 3 put: (realRoots at: 3) + (poly realRoots at: 1) .
+	realRoots at: 4 put: (realRoots at: 4) + (poly realRoots at: 2) .
+	imagRoots at: 3 put: (poly imagRoots at: 1) .
+	imagRoots at: 4 put: (poly imagRoots at: 2) .
+	
+	^ reals
 ]
 
 { #category : #'calculating-methods' }
@@ -325,4 +346,25 @@ Polynomial >> rootsOfNoCoefficients [
 	imagRoots := Array with: nil with: nil .
 	
 	^ self error: 'Polynomial equation is required!'
+]
+
+{ #category : #'calculating-methods' }
+Polynomial >> selectRealRoot: poly largerThan: limit [
+	"Find the roots of a polynomial, then examine the roots 
+	to find a real root larger than a limit."
+	
+	| thisReal |
+	poly findRoots < 2 
+		ifTrue: [ ^ poly realRoots at: 1 ] .
+	
+	1 to: poly imagRoots size do: [ :index | 
+		(poly imagRoots at: index) =~ 0
+			ifTrue: [ 
+				thisReal := poly realRoots at: index .
+				thisReal > limit
+					ifTrue: [ ^ thisReal ]
+				 ]
+		 ] .
+	
+	^ thisReal ifNil: [ 0 ]
 ]

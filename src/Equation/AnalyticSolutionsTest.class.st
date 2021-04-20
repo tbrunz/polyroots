@@ -14,12 +14,12 @@ AnalyticSolutionsTest >> testDegreeFour [
 	self should: [ eq findRoots ] raise: Error .
 	
 	"Four real, unique roots."
-	eq := Polynomial with: #( 24 -14 -13 -6 1 ) .
+	eq := Polynomial with: #( 24 -14 -13 2 1 ) .
 	self assert: eq findRoots equals: 4 .
 	self assert: (eq realRoots at: 4) closeTo: 3 .
-	self assert: (eq realRoots at: 3) closeTo: 3 .
+	self assert: (eq realRoots at: 3) closeTo: -2 .
 	self assert: (eq realRoots at: 2) closeTo: 1 .
-	self assert: (eq realRoots at: 1) closeTo: -2 .
+	self assert: (eq realRoots at: 1) closeTo: -4 .
 
 	"One real root, two complex conjugate roots."
 	eq := Polynomial with: #( 9 17 10 2 ) .
