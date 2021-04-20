@@ -17,7 +17,7 @@ and perhaps other types of equations.
 This application implements one package, "Equation", which defines one class, "Polynomial". 
 There is a test class to test various solution cases for each polynomial degree. 
 
-TODO: The quartic solution is not complete, and incorrect in its current form. 
+TODO: The quartic solution needs more test cases. 
 More documentation needs to be written...
 
 This was written in Pharo 9.
