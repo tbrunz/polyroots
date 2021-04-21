@@ -13,47 +13,35 @@ AnalyticSolutionsTest >> testDegreeFour [
 	eq := Polynomial with: #( 5 -2 -3 1 0 ) .
 	self should: [ eq findRoots ] raise: Error .
 	
-	"Four real, unique roots."
+	"Four real, unique roots, biquadratic."
 	eq := Polynomial with: #( 24 -14 -13 2 1 ) .
 	self assert: eq findRoots equals: 4 .
 	self assert: (eq realRoots at: 4) closeTo: 3 .
 	self assert: (eq realRoots at: 3) closeTo: -2 .
 	self assert: (eq realRoots at: 2) closeTo: 1 .
 	self assert: (eq realRoots at: 1) closeTo: -4 .
-
-	"One real root, two complex conjugate roots."
-	eq := Polynomial with: #( 9 17 10 2 ) .
-	self assert: eq findRoots equals: 1 .
-	self assert: (eq realRoots at: 3) closeTo: -2 .
-	self assert: (eq realRoots at: 2) closeTo: -2 .
-	self assert: (eq realRoots at: 1) closeTo: -1 .
-	self assert: (eq imagRoots at: 3) closeTo: -0.70710678 .
-	self assert: (eq imagRoots at: 2) closeTo: 0.70710678 .
-	self assert: (eq imagRoots at: 1) closeTo: 0 .
-
-	"One real root, two pure imaginary roots."
-	eq := Polynomial with: #( -6 2 -3 1) .
-	self assert: eq findRoots equals: 1 .
-	self assert: (eq realRoots at: 3) closeTo: 0 .
-	self assert: (eq realRoots at: 2) closeTo: 0 .
-	self assert: (eq realRoots at: 1) closeTo: 3 .
-	self assert: (eq imagRoots at: 3) closeTo: -1.41421356 .
-	self assert: (eq imagRoots at: 2) closeTo: 1.41421356 .
-	self assert: (eq imagRoots at: 1) closeTo: 0 .
 	
-	"Double real + real roots."
-	eq := Polynomial with: #( 12 -8 -1 1 ) .
-	self assert: eq findRoots equals: 3 .
+	"Two real, two complex roots."
+	eq := Polynomial with: #( 300 -128 -11 -2 1 ) .
+	self assert: eq findRoots equals: 2 .
+	self assert: (eq realRoots at: 4) closeTo: 6 .
 	self assert: (eq realRoots at: 3) closeTo: 2 .
-	self assert: (eq realRoots at: 2) closeTo: 2 .
-	self assert: (eq realRoots at: 1) closeTo: -3 .
-	
-	"Triple real roots."
-	eq := Polynomial with: #( 27 0 0 1 ) .
-	self assert: eq findRoots equals: 3 .
-	self assert: (eq realRoots at: 3) closeTo: -3 .
 	self assert: (eq realRoots at: 2) closeTo: -3 .
 	self assert: (eq realRoots at: 1) closeTo: -3 .
+	self assert: (eq imagRoots at: 2) closeTo: 4 .
+	self assert: (eq imagRoots at: 1) closeTo: -4 .
+	
+	"Four complex roots."
+	eq := Polynomial with: #( 306 54 43 6 1 ) .
+	self assert: eq findRoots equals: 0 .
+	self assert: (eq realRoots at: 4) closeTo: 0 .
+	self assert: (eq realRoots at: 3) closeTo: 0 .
+	self assert: (eq realRoots at: 2) closeTo: -3 .
+	self assert: (eq realRoots at: 1) closeTo: -3 .
+	self assert: (eq imagRoots at: 4) closeTo: 3 .
+	self assert: (eq imagRoots at: 3) closeTo: -3 .
+	self assert: (eq imagRoots at: 2) closeTo: 5 .
+	self assert: (eq imagRoots at: 1) closeTo: -5 .
 ]
 
 { #category : #tests }

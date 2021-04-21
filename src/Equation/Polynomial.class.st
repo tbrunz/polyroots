@@ -138,6 +138,23 @@ Polynomial >> imagRoots: anObject [
 	imagRoots := anObject
 ]
 
+{ #category : #'calculating-methods' }
+Polynomial >> quadraticRoots: index with: py with: q with: s [
+	"Solve a resulting quadratic of the quartic polynomial."
+	
+	| poly reals |
+	poly := self class with: { py - (q / s / 4) . (2 * s) . 1 } .
+	reals := poly findRoots .
+	
+	realRoots at: index   put: (realRoots at: index  ) + (poly realRoots at: 1) .
+	realRoots at: index+1 put: (realRoots at: index+1) + (poly realRoots at: 2) .
+	
+	imagRoots at: index   put: (poly imagRoots at: 1) .
+	imagRoots at: index+1 put: (poly imagRoots at: 2) .
+	
+	^ reals
+]
+
 { #category : #accessing }
 Polynomial >> realRoots [
 
@@ -180,35 +197,13 @@ Polynomial >> rootsOfDegreeFour [
 	r := e + (d * t) + (c * t * t) - (3 * t * t * t * t) .
 	
 	poly := self class with: { 
-		p / 2 * (p * p - r) - (q * q / 8) .
-		2 * p * p - r .
-		5 / 2 * p .
-		1 } .
+		p / 2 * (p * p - r) - (q * q / 8) . (2 * p * p - r) . (5 / 2 * p) . 1 } .
 	
 	y := self selectRealRoot: poly largerThan: p / -2 .
 	s := (2 * y + p) sqrt / 2 .
 	
-	poly := self class with: { 
-		p + y - (q / s / 4) .
-		2 * s .
-		1 } .
-	reals := poly findRoots .
-	
-	realRoots at: 1 put: (realRoots at: 1) + (poly realRoots at: 1) .
-	realRoots at: 2 put: (realRoots at: 2) + (poly realRoots at: 2) .
-	imagRoots at: 1 put: (poly imagRoots at: 1) .
-	imagRoots at: 2 put: (poly imagRoots at: 2) .
-	
-	poly := self class with: { 
-		p + y + (q / s / 4) .
-		-2 * s .
-		1 } .
-	reals := reals + poly findRoots .
-	
-	realRoots at: 3 put: (realRoots at: 3) + (poly realRoots at: 1) .
-	realRoots at: 4 put: (realRoots at: 4) + (poly realRoots at: 2) .
-	imagRoots at: 3 put: (poly imagRoots at: 1) .
-	imagRoots at: 4 put: (poly imagRoots at: 2) .
+	reals :=          self quadraticRoots: 1 with: p+y with: q with: s .
+	reals := reals + (self quadraticRoots: 3 with: p+y with: q with: s negated) .
 	
 	^ reals
 ]
