@@ -7,7 +7,7 @@ of degree 4 or less.
 Polynomials of degree 1, 2, 3, and 4 have analytic solutions based on their 
 coefficients; those of degree 5+ do not.
 
-This started out as an exercise in Pharo 9, to implement Ferrari's, Cardano's, 
+This started out as an exercise in Pharo, to implement Ferrari's, Cardano's, 
 Viete's, and the quadratic equation to find roots analytically, and without 
 using the PolyMath library (i.e., no complex number objects).
 
@@ -17,7 +17,11 @@ and perhaps other types of equations.
 This application implements one package, "Equation", which defines one class, "Polynomial". 
 There is a test class to test various solution cases for each polynomial degree. 
 
-TODO: The quartic solution needs more test cases. 
-More documentation needs to be written...
+The Wiki tab has the beginning of a tutorial based on this project.
 
-This was written in Pharo 9.
+TODO: 
+- The quartic solution needs more test cases. 
+- More documentation needs to be written...
+- More tutorial material needs to be written.
+
+This was coded in Pharo 9.
