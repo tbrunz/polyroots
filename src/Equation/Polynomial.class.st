@@ -346,23 +346,18 @@ Polynomial >> rootsOfNoCoefficients [
 { #category : #'calculating-methods' }
 Polynomial >> selectRealRoot: poly largerThan: limit [
 	"Find the roots of a polynomial, then examine the roots 
-	to find a real root larger than a limit."
+	to find the largest real root larger than a given limit."
 	
 	| pureReals maxRoot |
 	poly findRoots < 2 
 		ifTrue: [ ^ poly realRoots at: 1 ] .
 	
-	"Cherry pick the elements of 'realRoots' having no imaginary part."
-	"pureReals := poly realRoots withIndexSelect: [ :each :index |
-		(poly imagRoots at: index) = 0 ] ."
 	pureReals := poly realRoots .
 	
 	"Find the largest of the 3 real roots."
-	"maxRoot := pureReals inject: (pureReals at: 1) into: [ :largest :each |
-		largest max: each ] ."
 	maxRoot := ((pureReals at: 1) max: (pureReals at: 2)) max: (pureReals at: 3) .
 	
-	"We need it to be larger than the limit."
+	"But we require it to be larger than the limit provided."
 	maxRoot > limit 
 		ifTrue: [ ^ maxRoot ] .
 		
