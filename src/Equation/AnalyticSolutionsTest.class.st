@@ -41,17 +41,17 @@ AnalyticSolutionsTest >> testDegreeFourWithRealRoots [
 	eq := Polynomial with: #( 24 -14 -13 2 1 ) .
 	self assert: eq findRoots equals: 4 .
 	self assert: (eq realRoots at: 4) closeTo: 3 .
-	self assert: (eq realRoots at: 3) closeTo: -2 .
-	self assert: (eq realRoots at: 2) closeTo: 1 .
+	self assert: (eq realRoots at: 3) closeTo: 1 .
+	self assert: (eq realRoots at: 2) closeTo: -2 .
 	self assert: (eq realRoots at: 1) closeTo: -4 .
 	
 	"Four real, unique roots, biquadratic, opens downward."
 	eq := Polynomial with: #( -630 -456 204 24 -6 ) .
 	self assert: eq findRoots equals: 4 .
-	self assert: (eq realRoots at: 4) closeTo: 3 .
-	self assert: (eq realRoots at: 3) closeTo: -2 .
-	self assert: (eq realRoots at: 2) closeTo: 1 .
-	self assert: (eq realRoots at: 1) closeTo: -4 .
+	self assert: (eq realRoots at: 4) closeTo: 7 .
+	self assert: (eq realRoots at: 3) closeTo: 3 .
+	self assert: (eq realRoots at: 2) closeTo: -1 .
+	self assert: (eq realRoots at: 1) closeTo: -5 .
 ]
 
 { #category : #tests }

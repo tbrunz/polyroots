@@ -348,18 +348,23 @@ Polynomial >> selectRealRoot: poly largerThan: limit [
 	"Find the roots of a polynomial, then examine the roots 
 	to find a real root larger than a limit."
 	
-	| thisReal |
+	| pureReals maxRoot |
 	poly findRoots < 2 
 		ifTrue: [ ^ poly realRoots at: 1 ] .
 	
-	1 to: poly imagRoots size do: [ :index | 
-		(poly imagRoots at: index) =~ 0
-			ifTrue: [ 
-				thisReal := poly realRoots at: index .
-				thisReal > limit
-					ifTrue: [ ^ thisReal ]
-				 ]
-		 ] .
+	"Cherry pick the elements of 'realRoots' having no imaginary part."
+	"pureReals := poly realRoots withIndexSelect: [ :each :index |
+		(poly imagRoots at: index) = 0 ] ."
+	pureReals := poly realRoots .
 	
-	^ thisReal ifNil: [ 0 ]
+	"Find the largest of the 3 real roots."
+	"maxRoot := pureReals inject: (pureReals at: 1) into: [ :largest :each |
+		largest max: each ] ."
+	maxRoot := ((pureReals at: 1) max: (pureReals at: 2)) max: (pureReals at: 3) .
+	
+	"We need it to be larger than the limit."
+	maxRoot > limit 
+		ifTrue: [ ^ maxRoot ] .
+		
+	self error: 'Nested depressed cubic has no root larger than', limit asString
 ]
